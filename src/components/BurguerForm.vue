@@ -1,9 +1,12 @@
 <template>
 <div class="container">
+
+    <Message :msg="msg" v-show="msg" />
+
     <form @submit="createBurguer">
         <div class="input-container">
             <label for="nome">Nome: </label>
-            <input type="text" id="nome" name="nome" v-model="nome" placeholder="digite seu nome">
+            <input type="text" id="nome" name="nome" v-model="nome" placeholder="Digite seu nome">
         </div>
         <div class="input-container">
             <label for="pao">Escolha o Pão:</label>
@@ -38,6 +41,8 @@
 </template>
 
 <script>
+import Message from './Message.vue';
+
 export default{
      name: "Formulario",
      data() {
@@ -48,14 +53,18 @@ export default{
             nome: '',
             pao: '',
             opcionais: [],
-            status: 'solicitado',
+            status: 'Solicitado',
             msg: ''
         }
+     },
+     components:{
+        Message
      },
      methods:{
         async getIngredientes(){
             const req = await fetch("http://localhost:3000/ingredientes");
             const data = await req.json();
+         
 
             this.paes = data.paes;
             this.carnes = data.carnes;
@@ -82,7 +91,14 @@ export default{
 
             const res = await req.json()
 
-            console.log(res);
+            this.msg = `Pedido Nº${res.id} realizado com sucesso`
+
+            setTimeout(()=> this.msg = "", 3000)
+
+            this.nome = ""
+            this.carne = ""
+            this.pao = ""
+            this.opcionais = []
         }
      },
      mounted(){
@@ -94,10 +110,11 @@ export default{
 
 <style scoped>
 
-    .container{
-        display: flex;
-        justify-content: center;
-    }
+  .container{
+      display: flex;
+      justify-content: center;
+      flex-direction:column ;
+  }
 
   #burger-form {
     max-width: 400px;
